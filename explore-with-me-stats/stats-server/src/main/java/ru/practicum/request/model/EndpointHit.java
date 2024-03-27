@@ -1,24 +1,22 @@
 package ru.practicum.request.model;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
-@RequiredArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "hit")
 public class EndpointHit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "app is null")
     private String app;
-    @NotBlank(message = "uri is null")
     private String uri;
     private String ip;
     @Column(name = "timestamp_column")
