@@ -1,6 +1,6 @@
 version: '3.1'
 services:
-  stats-service:
+  stats-server:
     build: explore-with-me-stats/stats-server
     image: explore-with-me-stats
     container_name: stat-server
