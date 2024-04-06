@@ -2,6 +2,8 @@ package ru.practicum.dto.event;
 
 import lombok.Data;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -13,12 +15,13 @@ public class UpdateEventUserRequest {
     private int category;
     @Size(min = 20, max = 7000)
     private String description;
-    private LocalDateTime eventDate;
+    private String eventDate;
     private Location location;
     private boolean paid = false;
+    @PositiveOrZero
     private int participantLimit = 0;
     private boolean requestModeration = true;
-    private StateAction stringAction;
+    private StateAction stateAction;
     @Size(min = 3, max = 120)
     private String title;
 }

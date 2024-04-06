@@ -11,5 +11,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Optional<Category> findByName(String name);
     Page<Category> findAll(Pageable pageable);
+    Optional<Category> findByNameAndId(String name, long id);
 
 }

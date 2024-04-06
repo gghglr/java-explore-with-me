@@ -8,6 +8,8 @@ import ru.practicum.categories.admin.CategoryRepository;
 import ru.practicum.dto.event.*;
 import ru.practicum.dto.request.ParticipationRequestDto;
 import ru.practicum.dto.request.Status;
+import ru.practicum.exception.BadRequest;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.model.categories.Category;
 import ru.practicum.model.request.Request;
@@ -20,6 +22,7 @@ import ru.practicum.model.event.UserEventMapper;
 import ru.practicum.model.user.User;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +45,14 @@ public class UserEventServiceImpl implements UserEventService {
         Optional<Category> category = categoryRepository.findById((long) newEventDto.getCategory());
         checkForCategoryExist(category);
         UserEvent userEvent = UserEventMapper.toUserEvent(newEventDto);
+        if (newEventDto.getEventDate() != null ) {
+            LocalDateTime timeToUpdate = LocalDateTime.parse(newEventDto.getEventDate(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            if(timeToUpdate.isBefore(LocalDateTime.now())) {
+                throw new ValidationException("Дата уже наступила");
+            }
+            userEvent.setEventDate(timeToUpdate);
+        }
         userEvent.setCategory(category.get());
         userEvent.setConfirmedRequests(0);
         userEvent.setCreatedOn(LocalDateTime.now());
@@ -88,12 +99,12 @@ public class UserEventServiceImpl implements UserEventService {
 
     @Override
     public EventRequestStatusUpdateResult updateEventRequest(long userId, long eventId,
-                                                            EventRequestStatusUpdateRequest request) {
+                                                             EventRequestStatusUpdateRequest request) {
         adminRepository.findById(userId).orElseThrow(() -> {
-            return new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь не найден");
         });
         UserEvent event = eventRepository.findById(eventId).orElseThrow(() -> {
-            return new NotFoundException("Событие не найдено");
+            throw new NotFoundException("Событие не найдено");
         });
         if (userId != event.getInitiator().getId()) {
             throw new ValidationException("Вы не можете изменить статус приглашения, так как не являетесь " +
@@ -103,23 +114,22 @@ public class UserEventServiceImpl implements UserEventService {
         List<Request> requests = requestsRepository
                 .findByIdIn(request.getRequestIds());
         if (requests.size() == 1 && requests.get(0).getStatus().equals(Status.CONFIRMED)) {
-            throw new ValidationException("Вы не можете принять уже принятые заявки");
+            throw new ConflictException("Вы не можете принять уже принятые заявки");
         }
         EventRequestStatusUpdateResult updateRequestsStatus = new EventRequestStatusUpdateResult();
         List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
         List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
-        if (request.getStatus().equals(Status.REJECTED.toString())) {
-            for(Request requestLoop : requests){
+        if (request.getStatus().equals(Status.REJECTED)) {
+            for (Request requestLoop : requests) {
                 requestLoop.setStatus(Status.REJECTED);
                 requestsRepository.save(requestLoop);
-                confirmedRequests.add(RequestMapper.toDto(requestLoop));
+                rejectedRequests.add(RequestMapper.toDto(requestLoop));
             }
-            updateRequestsStatus.setConfirmedRequests(confirmedRequests);
-            updateRequestsStatus.setRejectedRequests(new ArrayList<>());
-            eventRepository.plusConfirmedRequests(eventId, confirmedRequests.size());
-            return updateRequestsStatus;
+            updateRequestsStatus.setConfirmedRequests(new ArrayList<>());
+            updateRequestsStatus.setRejectedRequests(rejectedRequests);
+            eventRepository.minusConfirmedRequests(eventId, rejectedRequests.size());
         }
-        if (event.getParticipantLimit() == 0 || !event.isRequestModeration()) {
+        if (!event.isRequestModeration() || request.getStatus().equals(Status.CONFIRMED)) {
             for (Request requestLoop : requests) {
                 requestLoop.setStatus(Status.CONFIRMED);
                 requestsRepository.save(requestLoop);
@@ -128,29 +138,11 @@ public class UserEventServiceImpl implements UserEventService {
             updateRequestsStatus.setConfirmedRequests(confirmedRequests);
             updateRequestsStatus.setRejectedRequests(new ArrayList<>());
             eventRepository.plusConfirmedRequests(eventId, confirmedRequests.size());
-            return updateRequestsStatus;
         }
-
-        if (requests.size() == 1) {
-            if (event.getParticipantLimit() == event.getConfirmedRequests()) {
-                throw new ValidationException("Event is full");
-            }
+        int confirmed = eventRepository.getConfirmedReq(eventId);
+        if(confirmed > event.getParticipantLimit()) {
+            throw new ConflictException("нет мест");
         }
-        int i = 0;
-        for (Request requestLoop : requests) {
-            if (event.getParticipantLimit() > (event.getConfirmedRequests() + i)) {
-                requestLoop.setStatus(Status.CONFIRMED);
-                requestsRepository.save(requestLoop);
-                confirmedRequests.add(RequestMapper.toDto(requestLoop));
-                i++;
-            } else {
-                requestLoop.setStatus(Status.REJECTED);
-                requestsRepository.save(requestLoop);
-                rejectedRequests.add(RequestMapper.toDto(requestLoop));
-            }
-        }
-        updateRequestsStatus.setConfirmedRequests(confirmedRequests);
-        updateRequestsStatus.setRejectedRequests(rejectedRequests);
         return updateRequestsStatus;
     }
 
@@ -161,9 +153,15 @@ public class UserEventServiceImpl implements UserEventService {
         try {
             UserEvent event = eventRepository.findById(eventId).get();
             LocalDateTime dateEvent = event.getEventDate();
+            if(event.getState().equals(State.PUBLISHED)) {
+                throw new ConflictException("Событие уже опубликовано");
+            }
             if ((event.getState().equals(State.PENDING) || event.getState().equals(State.CANCELED)) &&
                     event.getInitiator().getId() == userId && dateEvent.plusHours(2).isAfter(LocalDateTime.now())) {
-                if (!update.getAnnotation().isEmpty() && !update.getAnnotation().equals(event.getAnnotation())) {
+                if(update.getStateAction() != null && update.getStateAction().equals(StateAction.SEND_TO_REVIEW)) {
+                    event.setState(State.PENDING);
+                }
+                if (update.getAnnotation() != null && !update.getAnnotation().isEmpty() && !update.getAnnotation().equals(event.getAnnotation())) {
                     event.setAnnotation(update.getAnnotation());
                 }
                 if (update.getCategory() > 0 && update.getCategory() != event.getCategory().getId()) {
@@ -171,19 +169,26 @@ public class UserEventServiceImpl implements UserEventService {
                     checkForCategoryExist(category);
                     event.setCategory(category.get());
                 }
-                if (!update.getDescription().isEmpty() && !update.getDescription().equals(event.getDescription())) {
+                if (update.getDescription() != null && !update.getDescription().isEmpty() && !update.getDescription().equals(event.getDescription())) {
                     event.setDescription(update.getDescription());
                 }
-                if (update.getEventDate() != null && !update.getEventDate().equals(event.getEventDate())) {
-                    event.setEventDate(update.getEventDate());
+                if (update.getStateAction() != null && update.getStateAction().equals(StateAction.CANCEL_REVIEW)) {
+                    event.setState(State.CANCELED);
                 }
-                if ((Float) update.getLocation().getLat() != null && update.getLocation().getLat() != event.getLat() &&
-                        (Float) update.getLocation().getLon() != null && update.getLocation().getLon() != event.getLon()) {
+                if (update.getEventDate() != null && !update.getEventDate().equals(event.getEventDate())) {
+                    if (update.getEventDate() != null ) {
+                        LocalDateTime timeToUpdate = LocalDateTime.parse(update.getEventDate(),
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                        if(timeToUpdate.isBefore(LocalDateTime.now())) {
+                            throw new ValidationException("Дата уже наступила");
+                        }
+                        event.setEventDate(timeToUpdate);
+                    }
+                }
+                if (update.getLocation() != null && update.getLocation().getLat() != null && update.getLocation().getLat() != event.getLat() &&
+                        update.getLocation().getLon() != null && update.getLocation().getLon() != event.getLon()) {
                     event.setLat(update.getLocation().getLat());
                     event.setLon(update.getLocation().getLon());
-                }
-                if (update.isPaid() != event.getPaid()) {
-                    event.setPaid(update.isPaid());
                 }
                 if (update.getParticipantLimit() > 0 && update.getParticipantLimit() != event.getParticipantLimit()) {
                     event.setParticipantLimit(update.getParticipantLimit());
@@ -191,7 +196,7 @@ public class UserEventServiceImpl implements UserEventService {
                 if (update.isRequestModeration() != event.isRequestModeration()) {
                     event.setRequestModeration(update.isRequestModeration());
                 }
-                if (!update.getTitle().isEmpty() && !update.getTitle().equals(event.getTitle())) {
+                if (update.getTitle() != null && !update.getTitle().isEmpty() && !update.getTitle().equals(event.getTitle())) {
                     event.setTitle(update.getTitle());
                 }
             }

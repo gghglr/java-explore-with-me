@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import ru.practicum.categories.admin.CategoryRepository;
 import ru.practicum.dto.event.*;
 import ru.practicum.event.users.UserEventRepository;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.ValidationException;
 import ru.practicum.model.event.UserEvent;
 import ru.practicum.model.event.UserEventMapper;
 
@@ -90,14 +92,13 @@ public class AdminEventServiceImpl implements AdminEventService {
                 return UserEventMapper.toEventDtoFromEvent(eventRepository.save(eventUpdate));
             }
             if (eventAdminDto.getStateAction().equals(StateAction.PUBLISH_EVENT) && event.getState().equals(State.CANCELED)) {
-                throw new NotFoundException("Событие должно иметь State.PENDING");
+                throw new ConflictException("Событие должно иметь State.PENDING");
             }
             if (event.getState().equals(State.PUBLISHED)) {
-                throw new NotFoundException("Событие не должно быть PUBLISHED");
+                throw new ConflictException("Событие не должно быть PUBLISHED");
             }
         }
         UserEvent eventUpdate = currentUpdate(event, eventAdminDto);
-        log.info("Обновление события, возвращаемый обновленный ивент: {}", eventUpdate);
         return UserEventMapper.toEventDtoFromEvent(eventRepository.save(eventUpdate));
     }
 
@@ -105,28 +106,26 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (updateEventAdminRequest.getAnnotation() != null) {
             event.setAnnotation(updateEventAdminRequest.getAnnotation());
         }
-        if ((Long) updateEventAdminRequest.getCategory() != null) {
+        if (updateEventAdminRequest.getCategory() != null) {
             event.setCategory(categoryRepository.findById(updateEventAdminRequest.getCategory()).get());
         }
         if (updateEventAdminRequest.getDescription() != null) {
             event.setDescription(updateEventAdminRequest.getDescription());
         }
-        if (updateEventAdminRequest.getEventDate() != null) {
-            event.setEventDate(LocalDateTime.parse(updateEventAdminRequest.getEventDate(),
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        if (updateEventAdminRequest.getEventDate() != null ) {
+            LocalDateTime timeToUpdate = LocalDateTime.parse(updateEventAdminRequest.getEventDate(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            if(timeToUpdate.isBefore(LocalDateTime.now())) {
+                throw new ValidationException("Дата уже наступила");
+            }
+            event.setEventDate(timeToUpdate);
         }
         if (updateEventAdminRequest.getLocation() != null) {
             event.setLat(updateEventAdminRequest.getLocation().getLat());
             event.setLon(updateEventAdminRequest.getLocation().getLon());
         }
-        if ((Boolean) updateEventAdminRequest.isPaid() != null) {
-            event.setPaid(updateEventAdminRequest.isPaid());
-        }
-        if ((Integer) updateEventAdminRequest.getParticipantLimit() != null) {
+        if (updateEventAdminRequest.getParticipantLimit() > 0) {
             event.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
-        }
-        if ((Boolean) updateEventAdminRequest.isRequestModeration() != null) {
-            event.setRequestModeration(updateEventAdminRequest.isRequestModeration());
         }
         if (updateEventAdminRequest.getTitle() != null) {
             event.setTitle(updateEventAdminRequest.getTitle());

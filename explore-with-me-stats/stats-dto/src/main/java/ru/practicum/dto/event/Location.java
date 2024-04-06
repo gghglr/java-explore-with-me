@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class Location {
 
-    private float lat;
-    private float lon;
+    private Float lat;
+    private Float lon;
 }

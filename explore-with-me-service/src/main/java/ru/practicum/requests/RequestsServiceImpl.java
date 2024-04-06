@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.event.State;
-import ru.practicum.exception.AlreadyExist;
+import ru.practicum.exception.ConflictException;
 import ru.practicum.users.admin.AdminRepository;
 import ru.practicum.dto.request.ParticipationRequestDto;
 import ru.practicum.dto.request.Status;
@@ -37,20 +37,33 @@ public class RequestsServiceImpl implements RequestsService {
         checkForUserExist(user);
         Optional<UserEvent> event = eventRepository.findById(eventId);
         checkForEventExist(event);
-        if(!event.get().getState().equals(State.PUBLISHED)) {
-            throw new NotFoundException("Статус неверный")
-                    ;
+        if (!event.get().getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("Статус неверный");
         }
         Optional<Request> checkRequest = repository.findByRequesterAndEvent_Id(userId, eventId);
-        if(!checkRequest.isEmpty()) {
-            throw new AlreadyExist("Вы уже подали заявку на это мероприятие");
+        if (!checkRequest.isEmpty()) {
+            throw new ConflictException("Вы уже подали заявку на это мероприятие");
+        }
+        if (userId == event.get().getInitiator().getId()) {
+            throw new ConflictException("Вы не можете подать заявку на свое же событие");
+        }
+        if (!event.get().getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("Вы не можете подать заявку на неопубликованное событие");
+        }
+        if (event.get().getConfirmedRequests() == event.get().getParticipantLimit() && event
+                .get().getParticipantLimit() != 0) {
+            throw new ConflictException("Свободных мест не осталось");
         }
         Request request = new Request();
         request.setCreated(LocalDateTime.now());
         request.setEvent(event.get());
         request.setRequester(userId);
         request.setStatus(Status.PENDING);
-        if(!event.get().isRequestModeration()){
+        if (!event.get().isRequestModeration() && (event.get().getConfirmedRequests() + 1 <= event.get().getParticipantLimit())) {
+            request.setStatus(Status.CONFIRMED);
+            eventRepository.plusConfirmedRequests(eventId, 1);
+        }
+        if(event.get().isRequestModeration() && event.get().getParticipantLimit() == 0){
             request.setStatus(Status.CONFIRMED);
             eventRepository.plusConfirmedRequests(eventId, 1);
         }
@@ -75,8 +88,11 @@ public class RequestsServiceImpl implements RequestsService {
         checkForRequestExist(request);
         request.get().setStatus(Status.CANCELED);
         repository.updateStatus(Status.CANCELED, requestId);
-        eventRepository.minusConfirmedRequests(request.get().getEvent().getId(), 1);
-        return RequestMapper.toDto(request.get());
+        if (request.get().getStatus().equals(Status.CONFIRMED)) {
+            eventRepository.minusConfirmedRequests(request.get().getEvent().getId(), 1);
+        }
+        request.get().setStatus(Status.CANCELED);
+        return RequestMapper.toDto(repository.save(request.get()));
     }
 
     private void checkForUserExist(Optional<User> user) {
@@ -92,7 +108,7 @@ public class RequestsServiceImpl implements RequestsService {
     }
 
     private void checkForRequestExist(Optional<Request> request) {
-        if(request.isEmpty()) {
+        if (request.isEmpty()) {
             throw new NotFoundException("Заявка не найдена");
         }
     }

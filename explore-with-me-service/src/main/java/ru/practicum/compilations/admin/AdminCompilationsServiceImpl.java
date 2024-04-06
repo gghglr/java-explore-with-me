@@ -13,6 +13,7 @@ import ru.practicum.model.compilations.Compilations;
 import ru.practicum.model.compilations.CompilationsMapper;
 import ru.practicum.model.event.UserEventMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,10 +31,13 @@ public class AdminCompilationsServiceImpl implements AdminCompilationsService {
     public CompilationDto create(NewCompilationDto newCompilationDto) {
         Compilations compilations = CompilationsMapper.toCompilations(newCompilationDto);
         repository.save(compilations);
+        if (newCompilationDto.getEvents() == null) {
+            return CompilationsMapper.toDto(compilations, new ArrayList<>());
+        }
         List<EventShortDto> events = eventRepository.findByIdIn(compilations.getEvents()).stream()
                 .map(UserEventMapper::toShortDto)
                 .collect(Collectors.toList());
-        CompilationDto compilationDto = CompilationsMapper.toDto(compilations);
+        CompilationDto compilationDto = CompilationsMapper.toDto(compilations, events);
         compilationDto.setEvents(events);
         return compilationDto;
     }
@@ -49,21 +53,20 @@ public class AdminCompilationsServiceImpl implements AdminCompilationsService {
         Optional<Compilations> compilationsOpt = repository.findById(compId);
         checkCompExist(compilationsOpt);
         Compilations compilations = compilationsOpt.get();
-        if(!update.getEvents().isEmpty() && update.getEvents() != compilations.getEvents()) {
+        if(update.getEvents() != null && update.getEvents() != compilations.getEvents()) {
             compilations.setEvents(update.getEvents());
         }
-        if((Boolean)update.isPinned() != null && update.isPinned() != compilations.isPinned()) {
-            compilations.setPinned(update.isPinned());
+        if(update.getPinned() != null && update.getPinned() != compilations.getPinned()) {
+            compilations.setPinned(update.getPinned());
         }
-        if(!update.getTitle().isEmpty() && !update.getTitle().equals(compilations.getTitle())){
+        if(update.getTitle() != null && !update.getTitle().equals(compilations.getTitle())){
             compilations.setTitle(update.getTitle());
         }
         repository.save(compilations);
         List<EventShortDto> events = eventRepository.findByIdIn(compilations.getEvents()).stream()
                 .map(UserEventMapper::toShortDto)
                 .collect(Collectors.toList());
-        CompilationDto compilationDto = CompilationsMapper.toDto(compilations);
-        compilationDto.setEvents(events);
+        CompilationDto compilationDto = CompilationsMapper.toDto(compilations, events);
         return compilationDto;
     }
 

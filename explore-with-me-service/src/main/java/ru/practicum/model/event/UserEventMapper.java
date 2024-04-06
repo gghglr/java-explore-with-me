@@ -35,7 +35,7 @@ public class UserEventMapper {
         eventFullDto.setId(userEvent.getId());
         eventFullDto.setInitiator(UserMapper.toUserShort(userEvent.getInitiator()));
         eventFullDto.setLocation(new Location(userEvent.getLat(), userEvent.getLon()));
-        eventFullDto.setPaid(userEvent.getPaid());
+        eventFullDto.setPaid(userEvent.isPaid());
         eventFullDto.setParticipantLimit(userEvent.getParticipantLimit());
         if(userEvent.getPublishedOn() != null) {
             eventFullDto.setPublishedOn(userEvent.getPublishedOn().format(DateTimeFormatter
@@ -47,6 +47,7 @@ public class UserEventMapper {
         eventFullDto.setState(userEvent.getState());
         eventFullDto.setTitle(userEvent.getTitle());
         eventFullDto.setViews(userEvent.getViews());
+        System.out.println("Ошибки нет");
         return eventFullDto;
     }
 
@@ -58,7 +59,7 @@ public class UserEventMapper {
         eventShortDto.setEventDate(userEvent.getEventDate());
         eventShortDto.setId(userEvent.getId());
         eventShortDto.setInitiator(UserMapper.toUserShort(userEvent.getInitiator()));
-        eventShortDto.setPaid(userEvent.getPaid());
+        eventShortDto.setPaid(userEvent.isPaid());
         eventShortDto.setTitle(userEvent.getTitle());
         eventShortDto.setViews(userEvent.getViews());
         return eventShortDto;

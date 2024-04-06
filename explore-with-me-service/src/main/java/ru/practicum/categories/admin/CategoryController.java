@@ -36,7 +36,7 @@ public class CategoryController {
 
     @PatchMapping("/{catId}")
     public CategoryDto update(@PathVariable("catId") long catId,
-                              @RequestBody NewCategoryDto newCategoryDto) {
+                              @Validated @RequestBody NewCategoryDto newCategoryDto) {
         log.info("Получен запрос на обновление категории с Id: {}", catId);
         return service.update(newCategoryDto, catId);
     }

@@ -3,11 +3,11 @@ package ru.practicum.event.admin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.State;
 import ru.practicum.dto.event.UpdateEventAdminRequest;
-
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -40,10 +40,9 @@ public class AdminEventController {
     }
 
     @PatchMapping("/events/{eventId}")
-    public EventFullDto updateEventById(@RequestBody UpdateEventAdminRequest eventAdminDto,
+    public EventFullDto updateEventById(@Validated @RequestBody UpdateEventAdminRequest eventAdminDto,
                                         @PathVariable("eventId") long eventId) {
-        log.info("Обновление события от админа для события {}", eventId);
-        log.info("Объект для обновления" + eventAdminDto);
+        log.info("Обновление события от админа для события {}", eventAdminDto);
         return service.updateEvent(eventAdminDto, eventId);
     }
 

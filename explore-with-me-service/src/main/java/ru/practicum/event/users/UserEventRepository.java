@@ -10,10 +10,10 @@ import ru.practicum.dto.event.State;
 import ru.practicum.model.event.UserEvent;
 
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.model.user.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
 
@@ -29,7 +29,10 @@ public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
     @Query("UPDATE UserEvent r set r.confirmedRequests = r.confirmedRequests - :count where r.id = :id")
     void minusConfirmedRequests(@Param("id") long id, @Param("count") int count);
 
+    @Query(value = "SELECT e.confirmedRequests FROM UserEvent e WHERE e.id = :id")
+    int getConfirmedReq(@Param("id") long id);
     List<UserEvent> findByIdIn(List<Long> ids);
+    Optional<UserEvent> findByCategory_Id(long catId);
 
     @Query(value = "SELECT e FROM UserEvent e WHERE e.eventDate BETWEEN :start AND :end")
     Page<UserEvent> getForAdminWithoutParam(@Param("start") LocalDateTime rangeStart,

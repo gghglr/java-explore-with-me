@@ -2,11 +2,12 @@ package ru.practicum.requests;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.request.ParticipationRequestDto;
+import ru.practicum.exception.BadRequest;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Slf4j
@@ -23,8 +24,8 @@ public class RequestsController {
 
     @PostMapping("/{userId}/requests")
     @ResponseStatus(HttpStatus.CREATED)
-    public ParticipationRequestDto create(@PathVariable(name = "userId") long userId,
-                                          @RequestParam(name = "eventId") long eventId) {
+    public ParticipationRequestDto create(@NotNull @RequestParam(name = "eventId", required = true) Long eventId,
+                                          @PathVariable(name = "userId") Long userId) {
         log.info("Запрос на создание заявки от пользователя {} на событие {}", userId, eventId);
         return service.create(userId, eventId);
     }

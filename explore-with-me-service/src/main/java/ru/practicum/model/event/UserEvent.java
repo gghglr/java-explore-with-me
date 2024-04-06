@@ -38,7 +38,8 @@ public class UserEvent {
     private User initiator;
     private float lat;
     private float lon;
-    private Boolean paid;
+    @Column(name = "paid")
+    private boolean paid;
     @Column(name = "participant_limit")
     private int participantLimit;
     @Column(name = "published_on")

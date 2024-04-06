@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.*;
 import ru.practicum.dto.request.ParticipationRequestDto;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class UserEventController {
 
     @PostMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
-    public EventFullDto createEvent(@Validated @RequestBody NewEventDto newEventDto,
+    public EventFullDto createEvent(@Valid @RequestBody NewEventDto newEventDto,
                                     @PathVariable(name = "userId") long userId) {
         log.info("Запрос на создание ивента от пользователя: {}", userId);
         return service.createEvent(newEventDto, userId);
@@ -48,7 +49,7 @@ public class UserEventController {
     @PatchMapping("/{userId}/events/{eventId}")
     public EventFullDto updateEvent(@PathVariable(name = "userId") long userId,
                                     @PathVariable(name = "eventId") long eventId,
-                                    @RequestBody UpdateEventUserRequest updateEventUserRequest) {
+                                    @Valid @RequestBody UpdateEventUserRequest updateEventUserRequest) {
         log.info("Получение события с Id: {} от пользователя {}", eventId, userId);
         return service.updateEvent(userId, eventId, updateEventUserRequest);
     }
@@ -57,13 +58,14 @@ public class UserEventController {
     public List<ParticipationRequestDto> getRequests(@PathVariable(name = "userId") long userId,
                                                      @PathVariable(name = "eventId") long eventId) {
         log.info("Получение информации о запросах на участие в событии текущего пользователя {}", userId);
-        return  service.getRequests(userId, eventId);
+        return service.getRequests(userId, eventId);
     }
+
     @PatchMapping("/{userId}/events/{eventId}/requests")
     public EventRequestStatusUpdateResult updateEvent(@PathVariable(name = "userId") long userId,
-                                                            @PathVariable(name = "eventId") long eventId,
-                                                            @RequestBody EventRequestStatusUpdateRequest request) {
-        log.info("Получен запрос на изменение статуса заявки");
+                                                      @PathVariable(name = "eventId") long eventId,
+                                                      @RequestBody EventRequestStatusUpdateRequest request) {
+        log.info("Получен запрос на изменение статуса заявки {}", request);
         return service.updateEventRequest(userId, eventId, request);
     }
 }

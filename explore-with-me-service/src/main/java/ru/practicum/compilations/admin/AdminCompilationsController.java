@@ -3,6 +3,7 @@ package ru.practicum.compilations.admin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.dto.compilation.NewCompilationDto;
@@ -22,7 +23,7 @@ public class AdminCompilationsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto create(@RequestBody NewCompilationDto compilationDto) {
+    public CompilationDto create(@Validated @RequestBody NewCompilationDto compilationDto) {
         log.info("Создание подборки админом: ");
         return service.create(compilationDto);
     }
@@ -34,7 +35,7 @@ public class AdminCompilationsController {
         service.delete(compId);
     }
     @PatchMapping("/{compId}")
-    public CompilationDto update(@RequestBody UpdateCompilationRequest update,
+    public CompilationDto update(@Validated @RequestBody UpdateCompilationRequest update,
                                  @PathVariable("compId") long compId) {
         log.info("Получен запрос на обновление подборки с id {}", compId);
         return service.update(update, compId);

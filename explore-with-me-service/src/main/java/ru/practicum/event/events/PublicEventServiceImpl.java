@@ -73,9 +73,9 @@ public class PublicEventServiceImpl implements PublicEventService{
         if(event.isEmpty()){
             throw new NotFoundException("Событие не найдено");
         }
-//        if(!event.get().getState().equals(State.PUBLISHED)) {
-//            throw new NotFoundException("Это событие еще не опубликовано");
-//        }
+        if(!event.get().getState().equals(State.PUBLISHED)) {
+            throw new NotFoundException("Это событие еще не опубликовано");
+        }
         return UserEventMapper.toEventDtoFromEvent(event.get());
     }
 }

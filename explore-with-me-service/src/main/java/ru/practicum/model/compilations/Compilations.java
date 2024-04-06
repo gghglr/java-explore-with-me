@@ -21,6 +21,6 @@ public class Compilations {
     @CollectionTable(name = "compilation_events_id", joinColumns = @JoinColumn(name = "compilations_id"))
     @Column(name = "event_id")
     private List<Long> events;
-    private boolean pinned;
+    private Boolean pinned;
     private String title;
 }

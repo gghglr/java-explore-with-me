@@ -2,6 +2,9 @@ package ru.practicum.model.compilations;
 
 import ru.practicum.dto.compilation.CompilationDto;
 import ru.practicum.dto.compilation.NewCompilationDto;
+import ru.practicum.dto.event.EventShortDto;
+
+import java.util.List;
 
 public class CompilationsMapper {
 
@@ -13,11 +16,11 @@ public class CompilationsMapper {
         return compilations;
     }
 
-    public static CompilationDto toDto(Compilations compilations) {
+    public static CompilationDto toDto(Compilations compilations, List<EventShortDto> events) {
         CompilationDto compilationDto = new CompilationDto();
-        compilations.setEvents(compilations.getEvents());
+        compilationDto.setEvents(events);
         compilationDto.setId(compilations.getId());
-        compilationDto.setPinned(compilations.isPinned());
+        compilationDto.setPinned(compilations.getPinned());
         compilationDto.setTitle(compilations.getTitle());
         return compilationDto;
     }
