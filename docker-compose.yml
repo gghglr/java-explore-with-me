@@ -23,10 +23,10 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
-  explore-with-me-service:
+  ewm-service:
     build: explore-with-me-service
-    image: explore-with-me-service
-    container_name: explore-with-me-service
+    image: ewm-service
+    container_name: ewm-service
     ports:
       - "8080:8080"
     depends_on:

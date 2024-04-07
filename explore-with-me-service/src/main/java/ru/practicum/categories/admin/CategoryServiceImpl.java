@@ -2,7 +2,6 @@ package ru.practicum.categories.admin;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.practicum.event.users.UserEventRepository;
 import ru.practicum.exception.ConflictException;
@@ -44,7 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category oldCategory = categoryRepository.findById(catId).get();
         Optional<Category> findByNameAndId = categoryRepository.findByNameAndId(newCategoryDto.getName(), catId);
         Optional<Category> findByName = categoryRepository.findByName(newCategoryDto.getName());
-        if (!findByNameAndId.isEmpty()) {// для теста когда неизменяются данные
+        if (!findByNameAndId.isEmpty()) {
             return CategoryMapper.toDtoFromCategory(oldCategory);
         }
         if (!findByName.isEmpty() && findByName.get().getName().equals(newCategoryDto.getName())) {
