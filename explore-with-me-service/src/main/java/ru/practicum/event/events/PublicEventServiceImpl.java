@@ -1,12 +1,13 @@
 package ru.practicum.event.events;
 
-import jdk.dynalink.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.StatsClient;
+import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.dto.event.EventFullDto;
 import ru.practicum.dto.event.State;
 import ru.practicum.event.users.UserEventRepository;
@@ -23,15 +24,16 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PublicEventServiceImpl implements PublicEventService{
+public class PublicEventServiceImpl implements PublicEventService {
 
     @Autowired
     private final UserEventRepository repository;
+    private final StatsClient client;
 
     @Override
     public List<EventFullDto> getEventsForQuery(String text, Boolean paid, boolean onlyAvailable, List<Long> categories,
                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd, String sort,
-                                                int from, int size) {
+                                                int from, int size, String uri, String ip) {
         Pageable pageable = null;
         if (sort.equals("EVENT_DATE")) {
             pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "eventDate"));
@@ -40,7 +42,7 @@ public class PublicEventServiceImpl implements PublicEventService{
             pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "views"));
         }
         if (rangeStart.isAfter(rangeEnd)) {
-           throw new ValidationException("конец события раньше старта");
+            throw new ValidationException("конец события раньше старта");
         }
         if (pageable == null) {
             throw new NotFoundException("Сортировка не найдена");
@@ -68,14 +70,20 @@ public class PublicEventServiceImpl implements PublicEventService{
     }
 
     @Override
-    public EventFullDto getById(long id) {
+    public EventFullDto getById(long id, String uri, String ip) {
         Optional<UserEvent> event = repository.findById(id);
-        if(event.isEmpty()){
+        if (event.isEmpty()) {
             throw new NotFoundException("Событие не найдено");
         }
-        if(!event.get().getState().equals(State.PUBLISHED)) {
+        if (!event.get().getState().equals(State.PUBLISHED)) {
             throw new NotFoundException("Это событие еще не опубликовано");
         }
+        List<String> uris = new ArrayList<>();
+        uris.add(uri);
+        List<ViewStatsDto> viewStatsDtos = client.getAllStats(LocalDateTime.now().minusYears(10),
+                LocalDateTime.now().plusYears(10), uris, true).getBody();
+        event.get().setViews(viewStatsDtos.get(0).getHits());
+        repository.save(event.get());
         return UserEventMapper.toEventDtoFromEvent(event.get());
     }
 }

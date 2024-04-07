@@ -53,13 +53,13 @@ public class AdminCompilationsServiceImpl implements AdminCompilationsService {
         Optional<Compilations> compilationsOpt = repository.findById(compId);
         checkCompExist(compilationsOpt);
         Compilations compilations = compilationsOpt.get();
-        if(update.getEvents() != null && update.getEvents() != compilations.getEvents()) {
+        if (update.getEvents() != null && update.getEvents() != compilations.getEvents()) {
             compilations.setEvents(update.getEvents());
         }
-        if(update.getPinned() != null && update.getPinned() != compilations.getPinned()) {
+        if (update.getPinned() != null && update.getPinned() != compilations.getPinned()) {
             compilations.setPinned(update.getPinned());
         }
-        if(update.getTitle() != null && !update.getTitle().equals(compilations.getTitle())){
+        if (update.getTitle() != null && !update.getTitle().equals(compilations.getTitle())) {
             compilations.setTitle(update.getTitle());
         }
         repository.save(compilations);
@@ -71,7 +71,7 @@ public class AdminCompilationsServiceImpl implements AdminCompilationsService {
     }
 
     private void checkCompExist(Optional<Compilations> compilations) {
-        if(compilations.isEmpty()) {
+        if (compilations.isEmpty()) {
             throw new NotFoundException("Нечего удалять");
         }
     }

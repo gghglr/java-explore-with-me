@@ -7,15 +7,9 @@ import java.util.List;
 
 public interface PublicEventService {
 
-    List<EventFullDto> getEventsForQuery(String text,
-                                         Boolean paid,
-                                         boolean onlyAvailable,
-                                         List<Long> categories,
-                                         LocalDateTime rangeStart,
-                                         LocalDateTime rangeEnd,
-                                         String sort,
-                                         int from,
-                                         int size);
+    List<EventFullDto> getEventsForQuery(String text, Boolean paid, boolean onlyAvailable, List<Long> categories,
+                                         LocalDateTime rangeStart, LocalDateTime rangeEnd, String sort, int from,
+                                         int size, String uri, String ip);
 
-    EventFullDto getById(long id);
+    EventFullDto getById(long id, String uri, String ip);
 }

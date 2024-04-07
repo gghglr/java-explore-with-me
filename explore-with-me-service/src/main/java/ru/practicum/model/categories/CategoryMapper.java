@@ -12,7 +12,7 @@ public class CategoryMapper {
     }
 
     public static CategoryDto toDtoFromCategory(Category category) {
-       return new CategoryDto(category.getId(), category.getName());
+        return new CategoryDto(category.getId(), category.getName());
     }
 
 }

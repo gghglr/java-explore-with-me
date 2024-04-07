@@ -49,6 +49,6 @@ public class UserEvent {
     @Enumerated(EnumType.STRING)
     private State state;
     private String title;
-    private int views;
+    private long views;
 
 }

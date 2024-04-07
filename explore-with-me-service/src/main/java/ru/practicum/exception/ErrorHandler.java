@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -24,7 +22,7 @@ public class ErrorHandler {
     @ExceptionHandler({MissingRequestHeaderException.class, MethodArgumentNotValidException.class,
             NumberFormatException.class, ConstraintViolationException.class, ValidationException.class,
             MissingServletRequestParameterException.class
-            })
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidation(final Exception exception) {
         log.error("error = {}, httpStatus = {}", exception.getMessage(), HttpStatus.BAD_REQUEST);

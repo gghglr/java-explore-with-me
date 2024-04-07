@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-//ToDo: ИЗМЕНИТЬ ПРОСМОТРЫ У ИВЕНТА А ТО У МЕНЯ ПРОСТО 5 СТОИТ
+
 @Service
 @RequiredArgsConstructor
-public class CompilationsServiceImpl implements CompilationsService{
+public class CompilationsServiceImpl implements CompilationsService {
 
     private final AdminCompilationsRepository repository;
     private final UserEventRepository eventRepository;
@@ -42,7 +42,7 @@ public class CompilationsServiceImpl implements CompilationsService{
     @Override
     public CompilationDto getById(Long compId) {
         Optional<Compilations> compilations = repository.findById(compId);
-        if(compilations.isEmpty()) {
+        if (compilations.isEmpty()) {
             throw new NotFoundException("Подборка не найдена");
         }
         List<EventShortDto> events = eventRepository.findByIdIn(compilations.get().getEvents()).stream()

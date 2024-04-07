@@ -1,10 +1,8 @@
 package ru.practicum.dto.event;
 
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
-import java.time.LocalDateTime;
 
 @Data
 public class NewEventDto {

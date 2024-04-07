@@ -42,27 +42,27 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (users.size() == 0) {
             if (states.size() == 0) {
                 if (categories.size() == 0) {
-                    events = eventRepository.getForAdminWithoutParam(rangeStart, rangeEnd, page).getContent();
+                    events = eventRepository.findByEventDateBetween(rangeStart, rangeEnd, page).getContent();
                 } else {
-                    events = eventRepository.getForAdminWithCategories(categories, rangeStart, rangeEnd, page).getContent();
+                    events = eventRepository.findByCategory_IdInAndEventDateBetween(categories, rangeStart, rangeEnd, page).getContent();
                 }
             } else {
                 if (categories.size() == 0) {
-                    events = eventRepository.getForAdminStates(states, rangeStart, rangeEnd, page).getContent();
+                    events = eventRepository.findByStateInAndEventDateBetween(states, rangeStart, rangeEnd, page).getContent();
                 } else {
-                    events = eventRepository.getForAdminCategoriesAndStates(categories, states, rangeStart, rangeEnd, page).getContent();
+                    events = eventRepository.findByStateInAndCategoryInAndEventDateBetween(categories, states, rangeStart, rangeEnd, page).getContent();
                 }
             }
         } else {
             if (states.size() == 0) {
                 if (categories.size() == 0) {
-                    events = eventRepository.getForAdminUsers(users, rangeStart, rangeEnd, page).getContent();
+                    events = eventRepository.findByInitiator_IdInAndEventDateBetween(users, rangeStart, rangeEnd, page).getContent();
                 } else {
-                    events = eventRepository.getForAdminUsersCategories(users, categories, rangeStart, rangeEnd, page).getContent();
+                    events = eventRepository.findByInitiator_IdInAndCategory_IdInAndEventDateBetween(users, categories, rangeStart, rangeEnd, page).getContent();
                 }
             } else {
                 if (categories.size() == 0) {
-                    events = eventRepository.getForAdminUsersStates(users, states, rangeStart, rangeEnd, page).getContent();
+                    events = eventRepository.findByInitiator_IdInAndStateInAndEventDateBetween(users, states, rangeStart, rangeEnd, page).getContent();
                 } else {
                     events = eventRepository.findByInitiator_IdInAndStateInAndCategory_IdInAndEventDateBetween(users, states, categories, rangeStart, rangeEnd, page).getContent();
                 }
@@ -112,10 +112,13 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (updateEventAdminRequest.getDescription() != null) {
             event.setDescription(updateEventAdminRequest.getDescription());
         }
-        if (updateEventAdminRequest.getEventDate() != null ) {
+        if (updateEventAdminRequest.getPaid() != true) {
+            event.setPaid(updateEventAdminRequest.getPaid());
+        }
+        if (updateEventAdminRequest.getEventDate() != null) {
             LocalDateTime timeToUpdate = LocalDateTime.parse(updateEventAdminRequest.getEventDate(),
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            if(timeToUpdate.isBefore(LocalDateTime.now())) {
+            if (timeToUpdate.isBefore(LocalDateTime.now())) {
                 throw new ValidationException("Дата уже наступила");
             }
             event.setEventDate(timeToUpdate);

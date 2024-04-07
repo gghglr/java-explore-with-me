@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.request.ParticipationRequestDto;
-import ru.practicum.exception.BadRequest;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;

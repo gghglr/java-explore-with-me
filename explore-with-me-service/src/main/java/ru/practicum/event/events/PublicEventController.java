@@ -1,13 +1,12 @@
 package ru.practicum.event.events;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.StatsClient;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.event.EventFullDto;
-import ru.practicum.dto.event.StateAction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
@@ -19,16 +18,11 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/events")
+@RequiredArgsConstructor
 public class PublicEventController {
 
     private final PublicEventService service;
-    private final StatsClient client;
-
-    @Autowired
-    public PublicEventController(PublicEventService service, StatsClient client) {
-        this.service = service;
-        this.client = client;
-    }
+    private final StatsClient statsClient;
 
     @GetMapping
     public List<EventFullDto> getEvents(@RequestParam(name = "text", defaultValue = "") String text,
@@ -45,19 +39,29 @@ public class PublicEventController {
                                         @RequestParam(name = "sort", defaultValue = "VIEWS") String sort,
                                         HttpServletRequest httpServletRequest) {
         log.info("Получение событий для неавторизованного пользователя: ");
-//        EndpointHitDto endpointHitsDto = new EndpointHitDto();
-//        endpointHitsDto.setIp(httpServletRequest.getRemoteAddr());
-//        endpointHitsDto.setApp("ewm-main-service");
-//        endpointHitsDto.setUri(httpServletRequest.getRequestURI());
-//        endpointHitsDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-//        client.makeAndDoPostRequest("http://localhost:9090/hit", endpointHitsDto);
-        return service.getEventsForQuery(text, paid, onlyAvailable, categories, rangeStart, rangeEnd, sort, from, size);
+        EndpointHitDto endpointHitDto = createEndpointHitDto(httpServletRequest);
+        statsClient.save(endpointHitDto);
+        return service.getEventsForQuery(text, paid, onlyAvailable, categories, rangeStart, rangeEnd, sort, from, size,
+                httpServletRequest.getRequestURI(), httpServletRequest.getRemoteAddr());
     }
 
     @GetMapping("/{id}")
-    public EventFullDto getEventById(@PathVariable("id") long id) {
+    public EventFullDto getEventById(@PathVariable("id") long id,
+                                     HttpServletRequest httpServletRequest) {
         log.info("Публичный запрос: получение событие по id {}", id);
-        return service.getById(id);
+        EndpointHitDto endpointHitDto = createEndpointHitDto(httpServletRequest);
+        statsClient.save(endpointHitDto);
+        return service.getById(id, httpServletRequest.getRequestURI(), httpServletRequest.getRemoteAddr());
+    }
+
+
+    private EndpointHitDto createEndpointHitDto(HttpServletRequest httpServletRequest) {
+        EndpointHitDto endpointHitDto = new EndpointHitDto();
+        endpointHitDto.setIp(httpServletRequest.getRemoteAddr());
+        endpointHitDto.setApp("ewm-main-service");
+        endpointHitDto.setUri(httpServletRequest.getRequestURI());
+        endpointHitDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        return endpointHitDto;
     }
 
 }

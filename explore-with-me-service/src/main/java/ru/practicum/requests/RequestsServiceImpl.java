@@ -63,7 +63,7 @@ public class RequestsServiceImpl implements RequestsService {
             request.setStatus(Status.CONFIRMED);
             eventRepository.plusConfirmedRequests(eventId, 1);
         }
-        if(event.get().isRequestModeration() && event.get().getParticipantLimit() == 0){
+        if (event.get().isRequestModeration() && event.get().getParticipantLimit() == 0) {
             request.setStatus(Status.CONFIRMED);
             eventRepository.plusConfirmedRequests(eventId, 1);
         }

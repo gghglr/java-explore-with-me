@@ -34,6 +34,7 @@ public class AdminCompilationsController {
         log.info("Получен запрос на удаление подборки с id {}", compId);
         service.delete(compId);
     }
+
     @PatchMapping("/{compId}")
     public CompilationDto update(@Validated @RequestBody UpdateCompilationRequest update,
                                  @PathVariable("compId") long compId) {

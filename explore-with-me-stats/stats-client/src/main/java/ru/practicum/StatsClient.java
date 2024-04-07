@@ -1,92 +1,46 @@
 package ru.practicum;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-
-import org.springframework.util.MultiValueMap;
-
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.dto.ViewStatsDto;
 
-@RequiredArgsConstructor
-public class StatsClient {
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
 
-    protected final WebClient webClient;
-
-    private void makeAndDoGetRequest(String path) {
-        webClient.get()
-                .uri(path)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+@Service
+@Getter
+public class StatsClient extends BaseClient {
+    @Autowired
+    public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
+        super(
+                builder
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                        .build()
+        );
     }
 
-    private void makeAndDoPostRequest(String path, MultiValueMap<String, String> body) {
-        webClient.post()
-                .uri(path)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromFormData(body))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+    public ResponseEntity<Object> save(EndpointHitDto endpointHitDto) {
+        return post("/hit", endpointHitDto);
     }
 
-    private void makeAndDoUpdateRequest(String path, MultiValueMap<String, String> body) {
-        webClient.put()
-                .uri(path)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromFormData(body))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+    public ResponseEntity<List<ViewStatsDto>> getAllStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        Map<String, Object> parameters = Map.of(
+                "start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "uris", String.join(",", uris),
+                "unique", unique
+        );
+
+        return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
     }
-
-    private void makeAndDoDeleteRequest(String path) {
-        webClient.delete()
-                .uri(path)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
-
-
-
-    /*
-    Для отправки POST запроса из одного микросервиса в другой с использованием WebFlux в Java, вы можете использовать WebClient.
-
-Пример кода:
-
-```java
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-
-public class PostRequestExample {
-
-    public static void main(String[] args) {
-        WebClient client = WebClient.create("http://другой_микросервис_url");
-
-        client.post()
-              .uri("/путь_к_api")
-              .body(BodyInserters.fromValue("тело_запроса"))
-              .exchange()
-              .flatMap(response -> {
-                  if (response.statusCode().is2xxSuccessful()) {
-                      return response.bodyToMono(String.class);
-                  } else {
-                      return response.createException().flatMap(Mono::error);
-                  }
-              })
-              .subscribe(System.out::println);
-    }
-}
-```
-
-Замените "другой_микросервис_url" на URL вашего другого микросервиса и "путь_к_api" на путь к API, к которому вы хотите отправить POST запрос. Также замените "тело_запроса" на данные, которые вы хотите отправить в теле запроса.
-
-Этот код создает WebClient, который отправляет POST запрос по указанному URL и пути к API, передавая данные в теле запроса. Когда ответ получен, он выводит ответ в консоль.
-     */
 }

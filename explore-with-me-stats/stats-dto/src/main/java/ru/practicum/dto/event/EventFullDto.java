@@ -4,8 +4,6 @@ import lombok.Data;
 import ru.practicum.dto.category.CategoryDto;
 import ru.practicum.dto.user.UserShortDto;
 
-import java.time.LocalDateTime;
-
 @Data
 public class EventFullDto {
 
@@ -24,5 +22,5 @@ public class EventFullDto {
     private boolean requestModeration;
     private State state;
     private String title;
-    private int views;
+    private long views;
 }

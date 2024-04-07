@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CategoriesServiceImpl implements CategoriesService{
+public class CategoriesServiceImpl implements CategoriesService {
 
     private final CategoryRepository categoryRepository;
 
@@ -29,8 +29,8 @@ public class CategoriesServiceImpl implements CategoriesService{
 
     @Override
     public CategoryDto getCategoryById(long catId) {
-       Category category = categoryRepository.findById(catId)
+        Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Категория не найдена"));
-       return CategoryMapper.toDtoFromCategory(category);
+        return CategoryMapper.toDtoFromCategory(category);
     }
 }

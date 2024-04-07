@@ -31,52 +31,47 @@ public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
 
     @Query(value = "SELECT e.confirmedRequests FROM UserEvent e WHERE e.id = :id")
     int getConfirmedReq(@Param("id") long id);
+
     List<UserEvent> findByIdIn(List<Long> ids);
+
     Optional<UserEvent> findByCategory_Id(long catId);
 
-    @Query(value = "SELECT e FROM UserEvent e WHERE e.eventDate BETWEEN :start AND :end")
-    Page<UserEvent> getForAdminWithoutParam(@Param("start") LocalDateTime rangeStart,
-                                            @Param("end") LocalDateTime rangeEnd, Pageable page);
+    Page<UserEvent> findByEventDateBetween(LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
 
-    @Query(value = "SELECT e FROM UserEvent e WHERE e.category.id IN :categories AND e.eventDate" +
-            " BETWEEN :start AND :end")
-    Page<UserEvent> getForAdminWithCategories(@Param("categories") List<Long> categories,
-                                              @Param("start") LocalDateTime rangeStart,
-                                              @Param("end") LocalDateTime rangeEnd, Pageable page);
 
-    @Query(value = "SELECT e FROM UserEvent e WHERE e.state IN :states AND e.eventDate BETWEEN :start AND :end")
-    Page<UserEvent> getForAdminStates(@Param("states") List<State> states,
-                                                @Param("start") LocalDateTime rangeStart,
-                                                @Param("end") LocalDateTime rangeEnd, Pageable page);
+    Page<UserEvent> findByCategory_IdInAndEventDateBetween(List<Long> categories,
+                                                           LocalDateTime rangeStart,
+                                                           LocalDateTime rangeEnd, Pageable page);
 
-    @Query(value = "SELECT e FROM UserEvent e WHERE e.state IN :states AND e.category.id IN :categories AND e.eventDate BETWEEN :start AND :end")
-    Page<UserEvent> getForAdminCategoriesAndStates(@Param("categories") List<Long> categories,
-                                                             @Param("states") List<State> states,
-                                                             @Param("start") LocalDateTime rangeStart,
-                                                             @Param("end") LocalDateTime rangeEnd,
-                                                             Pageable page);
 
-    @Query(value = "SELECT e FROM UserEvent e WHERE e.initiator.id IN :users AND e.eventDate BETWEEN :start AND :end")
-    Page<UserEvent> getForAdminUsers(@Param("users") List<Long> users,
-                                               @Param("start") LocalDateTime rangeStart,
-                                               @Param("end") LocalDateTime rangeEnd,
-                                               Pageable page);
+    Page<UserEvent> findByStateInAndEventDateBetween(List<State> states,
+                                                     LocalDateTime rangeStart,
+                                                     LocalDateTime rangeEnd, Pageable page);
 
-    @Query(value = "SELECT e FROM UserEvent e WHERE e.initiator.id IN :users AND e.category.id IN :categories " +
-            "AND e.eventDate BETWEEN :start AND :end")
-    Page<UserEvent> getForAdminUsersCategories(@Param("users") List<Long> users,
-                                                            @Param("categories") List<Long> categories,
-                                                            @Param("start") LocalDateTime rangeStart,
-                                                            @Param("end") LocalDateTime rangeEnd,
+
+    Page<UserEvent> findByStateInAndCategoryInAndEventDateBetween(List<Long> categories,
+                                                                  List<State> states,
+                                                                  LocalDateTime rangeStart,
+                                                                  LocalDateTime rangeEnd,
+                                                                  Pageable page);
+
+
+    Page<UserEvent> findByInitiator_IdInAndEventDateBetween(List<Long> users,
+                                                            LocalDateTime rangeStart,
+                                                            LocalDateTime rangeEnd,
                                                             Pageable page);
 
-    @Query(value = "SELECT e FROM UserEvent e WHERE e.initiator.id IN :users AND e.state IN :states " +
-            "AND e.eventDate BETWEEN :start AND :end")
-    Page<UserEvent> getForAdminUsersStates(@Param("users") List<Long> users,
-                                                        @Param("states") List<State> states,
-                                                        @Param("start") LocalDateTime rangeStart,
-                                                        @Param("end") LocalDateTime rangeEnd,
-                                                        Pageable page);
+    Page<UserEvent> findByInitiator_IdInAndCategory_IdInAndEventDateBetween(List<Long> users,
+                                                                            List<Long> categories,
+                                                                            LocalDateTime rangeStart,
+                                                                            LocalDateTime rangeEnd,
+                                                                            Pageable page);
+
+    Page<UserEvent> findByInitiator_IdInAndStateInAndEventDateBetween(List<Long> users,
+                                                                      List<State> states,
+                                                                      LocalDateTime rangeStart,
+                                                                      LocalDateTime rangeEnd,
+                                                                      Pageable page);
 
     Page<UserEvent> findByInitiator_IdInAndStateInAndCategory_IdInAndEventDateBetween(List<Long> users,
                                                                                       List<State> states,

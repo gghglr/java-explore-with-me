@@ -31,7 +31,7 @@ public class CategoriesController {
 
     @GetMapping("/categories/{catId}")
     public CategoryDto getCategoryById(@PathVariable(name = "catId") long catId) {
-        log.info("Получение всех категории с id {}",catId);
+        log.info("Получение всех категории с id {}", catId);
         return service.getCategoryById(catId);
     }
 

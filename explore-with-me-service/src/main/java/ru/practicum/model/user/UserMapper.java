@@ -3,7 +3,6 @@ package ru.practicum.model.user;
 import ru.practicum.dto.user.NewUserRequest;
 import ru.practicum.dto.user.UserDto;
 import ru.practicum.dto.user.UserShortDto;
-import ru.practicum.model.user.User;
 
 public class UserMapper {
 

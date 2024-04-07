@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CompilationsMapper {
 
-    public static Compilations toCompilations (NewCompilationDto newDto) {
+    public static Compilations toCompilations(NewCompilationDto newDto) {
         Compilations compilations = new Compilations();
         compilations.setEvents(newDto.getEvents());
         compilations.setPinned(newDto.isPinned());

@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.StatsClient;
 import ru.practicum.categories.admin.CategoryRepository;
+import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.dto.event.*;
 import ru.practicum.dto.request.ParticipationRequestDto;
 import ru.practicum.dto.request.Status;
-import ru.practicum.exception.BadRequest;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.model.categories.Category;
@@ -37,6 +38,7 @@ public class UserEventServiceImpl implements UserEventService {
     private final CategoryRepository categoryRepository;
     private final AdminRepository adminRepository;
     private final RequestsRepository requestsRepository;
+    private final StatsClient client;
 
     @Override
     public EventFullDto createEvent(NewEventDto newEventDto, long userId) {
@@ -45,10 +47,10 @@ public class UserEventServiceImpl implements UserEventService {
         Optional<Category> category = categoryRepository.findById((long) newEventDto.getCategory());
         checkForCategoryExist(category);
         UserEvent userEvent = UserEventMapper.toUserEvent(newEventDto);
-        if (newEventDto.getEventDate() != null ) {
+        if (newEventDto.getEventDate() != null) {
             LocalDateTime timeToUpdate = LocalDateTime.parse(newEventDto.getEventDate(),
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            if(timeToUpdate.isBefore(LocalDateTime.now())) {
+            if (timeToUpdate.isBefore(LocalDateTime.now())) {
                 throw new ValidationException("Дата уже наступила");
             }
             userEvent.setEventDate(timeToUpdate);
@@ -58,7 +60,7 @@ public class UserEventServiceImpl implements UserEventService {
         userEvent.setCreatedOn(LocalDateTime.now());
         userEvent.setInitiator(user.get());
         userEvent.setState(State.PENDING);
-        userEvent.setViews(5);
+        userEvent.setViews(0);
         userEvent = eventRepository.save(userEvent);
         log.info("Сохраненный ивент: {}", userEvent);
         return UserEventMapper.toEventDtoFromEvent(userEvent);
@@ -140,10 +142,25 @@ public class UserEventServiceImpl implements UserEventService {
             eventRepository.plusConfirmedRequests(eventId, confirmedRequests.size());
         }
         int confirmed = eventRepository.getConfirmedReq(eventId);
-        if(confirmed > event.getParticipantLimit()) {
+        if (confirmed > event.getParticipantLimit()) {
             throw new ConflictException("нет мест");
         }
         return updateRequestsStatus;
+    }
+
+    private Long getViews(String requestURI) {
+        LocalDateTime start = LocalDateTime.now().minusYears(1);
+        LocalDateTime end = LocalDateTime.now().plusYears(1);
+        List<String> uris = List.of(requestURI);
+        Boolean unique = true;
+
+        List<ViewStatsDto> viewStatsDtos = client.getAllStats(start, end, uris, unique).getBody();
+
+        if (viewStatsDtos == null || viewStatsDtos.isEmpty()) {
+            return 0L;
+        }
+
+        return viewStatsDtos.get(0).getHits();
     }
 
     @Override
@@ -153,12 +170,12 @@ public class UserEventServiceImpl implements UserEventService {
         try {
             UserEvent event = eventRepository.findById(eventId).get();
             LocalDateTime dateEvent = event.getEventDate();
-            if(event.getState().equals(State.PUBLISHED)) {
+            if (event.getState().equals(State.PUBLISHED)) {
                 throw new ConflictException("Событие уже опубликовано");
             }
             if ((event.getState().equals(State.PENDING) || event.getState().equals(State.CANCELED)) &&
                     event.getInitiator().getId() == userId && dateEvent.plusHours(2).isAfter(LocalDateTime.now())) {
-                if(update.getStateAction() != null && update.getStateAction().equals(StateAction.SEND_TO_REVIEW)) {
+                if (update.getStateAction() != null && update.getStateAction().equals(StateAction.SEND_TO_REVIEW)) {
                     event.setState(State.PENDING);
                 }
                 if (update.getAnnotation() != null && !update.getAnnotation().isEmpty() && !update.getAnnotation().equals(event.getAnnotation())) {
@@ -176,10 +193,10 @@ public class UserEventServiceImpl implements UserEventService {
                     event.setState(State.CANCELED);
                 }
                 if (update.getEventDate() != null && !update.getEventDate().equals(event.getEventDate())) {
-                    if (update.getEventDate() != null ) {
+                    if (update.getEventDate() != null) {
                         LocalDateTime timeToUpdate = LocalDateTime.parse(update.getEventDate(),
                                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                        if(timeToUpdate.isBefore(LocalDateTime.now())) {
+                        if (timeToUpdate.isBefore(LocalDateTime.now())) {
                             throw new ValidationException("Дата уже наступила");
                         }
                         event.setEventDate(timeToUpdate);
