@@ -33,7 +33,7 @@ public class PublicEventServiceImpl implements PublicEventService {
     @Override
     public List<EventFullDto> getEventsForQuery(String text, Boolean paid, boolean onlyAvailable, List<Long> categories,
                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd, String sort,
-                                                int from, int size, String uri, String ip) {
+                                                int from, int size) {
         Pageable pageable = null;
         if (sort.equals("EVENT_DATE")) {
             pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "eventDate"));

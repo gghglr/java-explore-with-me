@@ -41,8 +41,7 @@ public class PublicEventController {
         log.info("Получение событий для неавторизованного пользователя: ");
         EndpointHitDto endpointHitDto = createEndpointHitDto(httpServletRequest);
         statsClient.save(endpointHitDto);
-        return service.getEventsForQuery(text, paid, onlyAvailable, categories, rangeStart, rangeEnd, sort, from, size,
-                httpServletRequest.getRequestURI(), httpServletRequest.getRemoteAddr());
+        return service.getEventsForQuery(text, paid, onlyAvailable, categories, rangeStart, rangeEnd, sort, from, size);
     }
 
     @GetMapping("/{id}")
