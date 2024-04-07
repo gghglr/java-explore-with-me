@@ -192,7 +192,7 @@ public class UserEventServiceImpl implements UserEventService {
                 if (update.getStateAction() != null && update.getStateAction().equals(StateAction.CANCEL_REVIEW)) {
                     event.setState(State.CANCELED);
                 }
-                if (update.getEventDate() != null && !update.getEventDate().equals(event.getEventDate())) {
+                if (update.getEventDate() != null && !update.getEventDate().equals(event.getEventDate().toString())) {
                     if (update.getEventDate() != null) {
                         LocalDateTime timeToUpdate = LocalDateTime.parse(update.getEventDate(),
                                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
