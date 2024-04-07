@@ -47,7 +47,6 @@ public class PublicEventServiceImpl implements PublicEventService {
         if (pageable == null) {
             throw new NotFoundException("Сортировка не найдена");
         }
-        List<EventFullDto> eventFullDto = new ArrayList<>();
         List<UserEvent> events;
         if (onlyAvailable) {
             if (categories.size() == 0) {
