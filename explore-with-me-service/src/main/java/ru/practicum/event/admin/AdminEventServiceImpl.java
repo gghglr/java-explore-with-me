@@ -38,7 +38,7 @@ public class AdminEventServiceImpl implements AdminEventService {
                                                 int from,
                                                 int size) {
         Pageable page = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "id"));
-        if(users.isEmpty() && states.isEmpty() && categories.isEmpty()) {
+        if (users.isEmpty() && states.isEmpty() && categories.isEmpty()) {
             return eventRepository.findByEventDateBetween(rangeStart, rangeEnd, page).getContent()
                     .stream().map(UserEventMapper::toEventDtoFromEvent).collect(Collectors.toList());
         }
