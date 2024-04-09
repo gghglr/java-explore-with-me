@@ -1,7 +1,7 @@
 package ru.practicum.users.admin;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,15 +12,11 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping(path = "/admin/users")
 public class AdminController {
 
-    private AdminService adminService;
-
-    @Autowired
-    public AdminController(AdminServiceImpl adminServiceImpl) {
-        this.adminService = adminServiceImpl;
-    }
+    private final AdminService adminService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

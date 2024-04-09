@@ -3,7 +3,6 @@ package ru.practicum.model.request;
 import ru.practicum.dto.request.ParticipationRequestDto;
 
 public class RequestMapper {
-
     public static ParticipationRequestDto toDto(Request request) {
         ParticipationRequestDto dto = new ParticipationRequestDto();
         dto.setCreated(request.getCreated());

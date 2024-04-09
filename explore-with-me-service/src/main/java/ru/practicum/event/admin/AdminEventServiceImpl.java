@@ -38,36 +38,12 @@ public class AdminEventServiceImpl implements AdminEventService {
                                                 int from,
                                                 int size) {
         Pageable page = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC, "id"));
-        List<UserEvent> events;
-        if (users.size() == 0) {
-            if (states.size() == 0) {
-                if (categories.size() == 0) {
-                    events = eventRepository.findByEventDateBetween(rangeStart, rangeEnd, page).getContent();
-                } else {
-                    events = eventRepository.findByCategory_IdInAndEventDateBetween(categories, rangeStart, rangeEnd, page).getContent();
-                }
-            } else {
-                if (categories.size() == 0) {
-                    events = eventRepository.findByStateInAndEventDateBetween(states, rangeStart, rangeEnd, page).getContent();
-                } else {
-                    events = eventRepository.findByStateInAndCategoryInAndEventDateBetween(categories, states, rangeStart, rangeEnd, page).getContent();
-                }
-            }
-        } else {
-            if (states.size() == 0) {
-                if (categories.size() == 0) {
-                    events = eventRepository.findByInitiator_IdInAndEventDateBetween(users, rangeStart, rangeEnd, page).getContent();
-                } else {
-                    events = eventRepository.findByInitiator_IdInAndCategory_IdInAndEventDateBetween(users, categories, rangeStart, rangeEnd, page).getContent();
-                }
-            } else {
-                if (categories.size() == 0) {
-                    events = eventRepository.findByInitiator_IdInAndStateInAndEventDateBetween(users, states, rangeStart, rangeEnd, page).getContent();
-                } else {
-                    events = eventRepository.findByInitiator_IdInAndStateInAndCategory_IdInAndEventDateBetween(users, states, categories, rangeStart, rangeEnd, page).getContent();
-                }
-            }
+        if(users.isEmpty() && states.isEmpty() && categories.isEmpty()) {
+            return eventRepository.findByEventDateBetween(rangeStart, rangeEnd, page).getContent()
+                    .stream().map(UserEventMapper::toEventDtoFromEvent).collect(Collectors.toList());
         }
+        List<UserEvent> events = eventRepository.findByFilter(users, states, categories, rangeStart, rangeEnd, page)
+                .getContent();
         return events.stream().map(UserEventMapper::toEventDtoFromEvent).collect(Collectors.toList());
     }
 

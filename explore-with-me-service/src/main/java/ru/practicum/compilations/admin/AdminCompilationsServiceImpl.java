@@ -13,6 +13,7 @@ import ru.practicum.model.compilations.Compilations;
 import ru.practicum.model.compilations.CompilationsMapper;
 import ru.practicum.model.event.UserEventMapper;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,11 +23,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminCompilationsServiceImpl implements AdminCompilationsService {
 
-    @Autowired
     private final AdminCompilationsRepository repository;
-    @Autowired
     private final UserEventRepository eventRepository;
 
+    @Transactional
     @Override
     public CompilationDto create(NewCompilationDto newCompilationDto) {
         Compilations compilations = CompilationsMapper.toCompilations(newCompilationDto);

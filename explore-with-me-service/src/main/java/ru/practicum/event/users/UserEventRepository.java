@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.Nullable;
 import ru.practicum.dto.event.State;
 import ru.practicum.model.event.UserEvent;
 
@@ -36,49 +37,20 @@ public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
 
     Optional<UserEvent> findByCategory_Id(long catId);
 
+    @Query(value = "SELECT e FROM UserEvent e " +
+            "WHERE 1 = 1 " +
+            "AND (e.category.id in :categories or :categories is null) " +
+            "AND (e.initiator.id in :users or :users is null) " +
+            "AND (e.state in :states or :states is null) " +
+            "AND (e.eventDate BETWEEN :start AND :end)")
+    Page<UserEvent> findByFilter(@Nullable @Param("users") List<Long> users,
+                                 @Nullable @Param("states") List<State> states,
+                                 @Nullable @Param("categories") List<Long> categories,
+                                 @Param("start") LocalDateTime rangeStart,
+                                 @Param("end") LocalDateTime rangeEnd,
+                                 Pageable page);
+
     Page<UserEvent> findByEventDateBetween(LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
-
-
-    Page<UserEvent> findByCategory_IdInAndEventDateBetween(List<Long> categories,
-                                                           LocalDateTime rangeStart,
-                                                           LocalDateTime rangeEnd, Pageable page);
-
-
-    Page<UserEvent> findByStateInAndEventDateBetween(List<State> states,
-                                                     LocalDateTime rangeStart,
-                                                     LocalDateTime rangeEnd, Pageable page);
-
-
-    Page<UserEvent> findByStateInAndCategoryInAndEventDateBetween(List<Long> categories,
-                                                                  List<State> states,
-                                                                  LocalDateTime rangeStart,
-                                                                  LocalDateTime rangeEnd,
-                                                                  Pageable page);
-
-
-    Page<UserEvent> findByInitiator_IdInAndEventDateBetween(List<Long> users,
-                                                            LocalDateTime rangeStart,
-                                                            LocalDateTime rangeEnd,
-                                                            Pageable page);
-
-    Page<UserEvent> findByInitiator_IdInAndCategory_IdInAndEventDateBetween(List<Long> users,
-                                                                            List<Long> categories,
-                                                                            LocalDateTime rangeStart,
-                                                                            LocalDateTime rangeEnd,
-                                                                            Pageable page);
-
-    Page<UserEvent> findByInitiator_IdInAndStateInAndEventDateBetween(List<Long> users,
-                                                                      List<State> states,
-                                                                      LocalDateTime rangeStart,
-                                                                      LocalDateTime rangeEnd,
-                                                                      Pageable page);
-
-    Page<UserEvent> findByInitiator_IdInAndStateInAndCategory_IdInAndEventDateBetween(List<Long> users,
-                                                                                      List<State> states,
-                                                                                      List<Long> categories,
-                                                                                      LocalDateTime rangeStart,
-                                                                                      LocalDateTime rangeEnd,
-                                                                                      Pageable page);
 
     @Query(value = "SELECT e FROM UserEvent e WHERE " +
             "(:text = '' OR (UPPER(e.description) LIKE UPPER(CONCAT('%', :text, '%')) OR UPPER(e.annotation) LIKE UPPER(CONCAT('%', :text, '%'))) " +
@@ -102,7 +74,6 @@ public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
                                                  @Param("end") LocalDateTime rangeEnd,
                                                  Pageable pageable);
 
-
     @Query(value = "SELECT e FROM UserEvent e WHERE " +
             "(:text = '' OR (UPPER(e.description) LIKE UPPER(CONCAT('%', :text, '%')) OR UPPER(e.annotation) LIKE UPPER(CONCAT('%', :text, '%'))) " +
             "AND (:paid IS NULL OR e.paid IS :paid) AND (e.eventDate BETWEEN :start AND :end) " +
@@ -121,5 +92,6 @@ public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
                                                     @Param("start") LocalDateTime rangeStart,
                                                     @Param("end") LocalDateTime rangeEnd,
                                                     Pageable pageable);
+
 
 }

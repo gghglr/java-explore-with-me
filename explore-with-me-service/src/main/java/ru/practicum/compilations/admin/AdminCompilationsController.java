@@ -1,7 +1,7 @@
 package ru.practicum.compilations.admin;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,19 +12,15 @@ import ru.practicum.dto.compilation.UpdateCompilationRequest;
 @RestController
 @Slf4j
 @RequestMapping("/admin/compilations")
+@RequiredArgsConstructor
 public class AdminCompilationsController {
 
     private final AdminCompilationsService service;
 
-    @Autowired
-    public AdminCompilationsController(AdminCompilationsServiceImpl service) {
-        this.service = service;
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CompilationDto create(@Validated @RequestBody NewCompilationDto compilationDto) {
-        log.info("Создание подборки админом: ");
+        log.info("Создание подборки админом: {}", compilationDto);
         return service.create(compilationDto);
     }
 

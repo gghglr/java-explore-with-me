@@ -1,7 +1,7 @@
 package ru.practicum.event.admin;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +17,10 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class AdminEventController {
 
     private final AdminEventService service;
-
-    @Autowired
-    public AdminEventController(AdminEventServiceImpl service) {
-        this.service = service;
-    }
 
     @GetMapping("/events")
     public List<EventFullDto> getEvents(@RequestParam(name = "users", defaultValue = "") List<Long> users,
@@ -33,7 +29,7 @@ public class AdminEventController {
                                         @RequestParam(name = "states", defaultValue = "") List<State> states,
                                         @RequestParam(name = "categories", defaultValue = "") List<Long> categories,
                                         @RequestParam(name = "rangeStart", defaultValue = "#{T(java.time.LocalDateTime).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-                                        @RequestParam(name = "rangeEnd", defaultValue = "2500-01-01 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd) {
+                                        @RequestParam(name = "rangeEnd", defaultValue = "2100-01-01 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd) {
         log.info("Получение событий с параметрами: = {}, states = {}, categories = {}, rangeStart = {}, " +
                 "rangeEnd = {}", users, states, categories, rangeStart, rangeEnd);
         return service.getEventsForAdmin(users, states, categories, rangeStart, rangeEnd, from, size);

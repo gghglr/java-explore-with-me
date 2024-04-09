@@ -1,7 +1,7 @@
 package ru.practicum.event.users;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.event.*;
@@ -13,14 +13,10 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(path = "/users")
+@RequiredArgsConstructor
 public class UserEventController {
 
     private final UserEventService service;
-
-    @Autowired
-    public UserEventController(UserEventServiceImpl service) {
-        this.service = service;
-    }
 
     @PostMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)

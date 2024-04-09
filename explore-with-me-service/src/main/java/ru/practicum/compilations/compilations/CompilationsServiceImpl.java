@@ -10,11 +10,10 @@ import ru.practicum.event.users.UserEventRepository;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.model.compilations.Compilations;
 import ru.practicum.model.compilations.CompilationsMapper;
+import ru.practicum.model.event.UserEvent;
 import ru.practicum.model.event.UserEventMapper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,13 +27,23 @@ public class CompilationsServiceImpl implements CompilationsService {
     public List<CompilationDto> getComp(Boolean pinned, int from, int size) {
         List<Compilations> compilations = repository.findByPinned(pinned, PageRequest.of(from, size));
         List<CompilationDto> compilationDto = new ArrayList<>();
-        for (Compilations compilation : compilations) {
-            List<EventShortDto> shortsDto = eventRepository.findByIdIn(compilation.getEvents()).stream()
-                    .map(UserEventMapper::toShortDto)
-                    .collect(Collectors.toList());
-            compilationDto.add(CompilationsMapper.toDto(compilation, shortsDto));
-        }
+        List<Long> allIdsEvent = new ArrayList<>();
+        compilations.stream().forEach(x -> {
+            List<Long> ids = x.getEvents();
+            ids.stream().forEach(currentId -> allIdsEvent.add(currentId));
+        });
 
+        List<UserEvent> userEvents = eventRepository.findByIdIn(allIdsEvent);
+        Map<Long, UserEvent> map = new HashMap<>();
+        userEvents.stream().forEach(x -> map.put(x.getId(), x));
+
+        for (Compilations compilation : compilations) {
+            List<EventShortDto> shortDtos = new ArrayList<>();
+            compilation.getEvents().stream().forEach(x -> {
+                shortDtos.add(UserEventMapper.toShortDto(map.get(x)));
+            });
+            compilationDto.add(CompilationsMapper.toDto(compilation, shortDtos));
+        }
 
         return compilationDto;
     }

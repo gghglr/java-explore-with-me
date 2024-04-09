@@ -23,7 +23,7 @@ public class UserEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String annotation;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category")
     private Category category;
     @Column(name = "confirmed_requests")
@@ -33,7 +33,7 @@ public class UserEvent {
     private String description;
     @Column(name = "event_date")
     private LocalDateTime eventDate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator")
     private User initiator;
     private float lat;

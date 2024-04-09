@@ -1,7 +1,7 @@
 package ru.practicum.categories.users;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.categories.admin.CategoryRepository;
 import ru.practicum.dto.category.CategoryDto;
@@ -19,9 +19,9 @@ public class CategoriesServiceImpl implements CategoriesService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public List<CategoryDto> getCategories(int from, int size) {
+    public List<CategoryDto> getCategories(Pageable pageable) {
 
-        return categoryRepository.findAll(PageRequest.of(from, size))
+        return categoryRepository.findAll(pageable)
                 .stream()
                 .map(CategoryMapper::toDtoFromCategory)
                 .collect(Collectors.toList());

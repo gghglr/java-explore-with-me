@@ -34,19 +34,16 @@ public class PublicEventServiceImpl implements PublicEventService {
     public List<EventFullDto> getEventsForQuery(String text, Boolean paid, boolean onlyAvailable, List<Long> categories,
                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd, String sort,
                                                 int from, int size) {
-        Pageable pageable = null;
-        if (sort.equals("EVENT_DATE")) {
-            pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "eventDate"));
-        }
-        if (sort.equals("VIEWS")) {
-            pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "views"));
+        Pageable pageable;
+        if (sort.equals("EVENT_DATE") || sort.equals("VIEWS")) {
+            pageable = PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, toLowerCase(sort)));
+        } else {
+            throw new NotFoundException("Сортировка не найдена");
         }
         if (rangeStart.isAfter(rangeEnd)) {
             throw new ValidationException("конец события раньше старта");
         }
-        if (pageable == null) {
-            throw new NotFoundException("Сортировка не найдена");
-        }
+
         List<UserEvent> events;
         if (onlyAvailable) {
             if (categories.size() == 0) {
@@ -84,5 +81,17 @@ public class PublicEventServiceImpl implements PublicEventService {
         event.get().setViews(viewStatsDtos.get(0).getHits());
         repository.save(event.get());
         return UserEventMapper.toEventDtoFromEvent(event.get());
+    }
+
+    private String toLowerCase(String text) {
+        StringBuilder builder = new StringBuilder(text.toLowerCase());
+        while (builder.indexOf("_") > 0) {
+            int pos = builder.indexOf("_");
+            builder.replace(pos, pos + 1, "");
+            String letter = builder.substring(pos, pos + 1);
+            builder.replace(pos, pos + 1, letter.toUpperCase());
+            pos = 0;
+        }
+        return builder.toString();
     }
 }
