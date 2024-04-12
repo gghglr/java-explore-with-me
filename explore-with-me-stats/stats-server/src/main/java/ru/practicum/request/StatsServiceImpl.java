@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.exception.ValidationExceptionStat;
 import ru.practicum.request.model.HitViewMapper;
 import ru.practicum.request.model.ViewStats;
 
@@ -25,6 +26,9 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public List<ViewStats> getRequests(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        if (start.isAfter(end)) {
+            throw new ValidationExceptionStat("Старт позже окончания");
+        }
         List<ViewStats> stats;
         if (unique) {
             if (!uris.isEmpty()) {

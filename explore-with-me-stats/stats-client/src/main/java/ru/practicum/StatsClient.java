@@ -1,53 +1,46 @@
 package ru.practicum;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.DefaultUriBuilderFactory;
+import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.dto.ViewStatsDto;
 
-import org.springframework.util.MultiValueMap;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
 
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-
-@RequiredArgsConstructor
-public class StatsClient {
-
-    protected final WebClient webClient;
-
-    private void makeAndDoGetRequest(String path) {
-        webClient.get()
-                .uri(path)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+@Service
+@Getter
+public class StatsClient extends BaseClient {
+    @Autowired
+    public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
+        super(
+                builder
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                        .build()
+        );
     }
 
-    private void makeAndDoPostRequest(String path, MultiValueMap<String, String> body) {
-        webClient.post()
-                .uri(path)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromFormData(body))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+    public ResponseEntity<Object> save(EndpointHitDto endpointHitDto) {
+        return post("/hit", endpointHitDto);
     }
 
-    private void makeAndDoUpdateRequest(String path, MultiValueMap<String, String> body) {
-        webClient.put()
-                .uri(path)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromFormData(body))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
+    public ResponseEntity<List<ViewStatsDto>> getAllStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        Map<String, Object> parameters = Map.of(
+                "start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "uris", String.join(",", uris),
+                "unique", unique
+        );
 
-    private void makeAndDoDeleteRequest(String path) {
-        webClient.delete()
-                .uri(path)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
     }
 }
