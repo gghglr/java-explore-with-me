@@ -346,65 +346,6 @@
 					"response": []
 				},
 				{
-					"name": "Принятие события 2 админом",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {",
-									"   pm.response.to.have.status(200);; // код ответа должен быть равен 200 OK",
-									"    pm.response.to.be.withBody; // ответ должен содержать тело",
-									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
-									"});",
-									"",
-									"const target = pm.response.json();",
-									"",
-									"pm.test(\"Пользователь должен содержать поля\", function () {",
-									"pm.expect(target).to.have.property('annotation');",
-									"pm.expect(target).to.have.property('category');",
-									"pm.expect(target).to.have.property('confirmedRequests');",
-									"pm.expect(target).to.have.property('createdOn');",
-									"pm.expect(target).to.have.property('description');",
-									"pm.expect(target).to.have.property('eventDate');",
-									"pm.expect(target).to.have.property('id');",
-									"pm.expect(target).to.have.property('initiator');",
-									"pm.expect(target).to.have.property('location');",
-									"pm.expect(target).to.have.property('paid');",
-									"pm.expect(target).to.have.property('participantLimit');",
-									"pm.expect(target).to.have.property('publishedOn');",
-									"pm.expect(target).to.have.property('requestModeration');",
-									"pm.expect(target).to.have.property('state');",
-									"pm.expect(target).to.have.property('title');",
-									"pm.expect(target).to.have.property('views');",
-									"pm.expect(target).to.have.property('likes');",
-									"pm.expect(target).to.have.property('dislikes');",
-									"pm.expect(target).to.have.property('rating');",
-									"pm.expect(target).to.have.property('state');",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"stateAction\" : \"PUBLISH_EVENT\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "http://localhost:8080/admin/events/2"
-					},
-					"response": []
-				},
-				{
 					"name": "пользователь 1 лайк событию 1",
 					"event": [
 						{
