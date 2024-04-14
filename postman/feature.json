@@ -1,0 +1,1035 @@
+{
+	"info": {
+		"_postman_id": "70e3e7e2-9417-4fc6-8e6a-7caf45e69a2d",
+		"name": "\"Explore with me\" Likes/Dislikes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "30765399"
+	},
+	"item": [
+		{
+			"name": "function",
+			"item": [
+				{
+					"name": "Добавление пользователя 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля\", function () {",
+									"pm.expect(target).to.have.property('email');",
+									"pm.expect(target).to.have.property('name');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@user.ru\",\n    \"name\": \"testUser1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/admin/users"
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление пользователя 2 Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля\", function () {",
+									"pm.expect(target).to.have.property('email');",
+									"pm.expect(target).to.have.property('name');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user2@user.ru\",\n    \"name\": \"testUser2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/admin/users"
+					},
+					"response": []
+				},
+				{
+					"name": "создание новой категории Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" : \"categoryNew\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/admin/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление нового события Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля\", function () {",
+									"pm.expect(target).to.have.property('annotation');",
+									"pm.expect(target).to.have.property('category');",
+									"pm.expect(target).to.have.property('confirmedRequests');",
+									"pm.expect(target).to.have.property('createdOn');",
+									"pm.expect(target).to.have.property('description');",
+									"pm.expect(target).to.have.property('eventDate');",
+									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('initiator');",
+									"pm.expect(target).to.have.property('location');",
+									"pm.expect(target).to.have.property('paid');",
+									"pm.expect(target).to.have.property('participantLimit');",
+									"pm.expect(target).to.have.property('publishedOn');",
+									"pm.expect(target).to.have.property('requestModeration');",
+									"pm.expect(target).to.have.property('state');",
+									"pm.expect(target).to.have.property('title');",
+									"pm.expect(target).to.have.property('views');",
+									"pm.expect(target).to.have.property('likes');",
+									"pm.expect(target).to.have.property('dislikes');",
+									"pm.expect(target).to.have.property('rating');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"annotation\" : \"annotationannotationannotation\",\n    \"category\" : 1,\n    \"description\" : \"descriptiondescriptiondescription\",\n    \"eventDate\" : \"2024-05-14 13:00:00\",\n    \"location\": {\n        \"lat\": 8.4394,\n        \"lon\": -32.6814\n    },\n    \"paid\" : \"false\",\n    \"participantLimit\" : 100,\n    \"requestModeration\" : false,\n    \"title\" : \"titletitletitletitletitletitle\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"events"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "добавление нового события 2 Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля\", function () {",
+									"pm.expect(target).to.have.property('annotation');",
+									"pm.expect(target).to.have.property('category');",
+									"pm.expect(target).to.have.property('confirmedRequests');",
+									"pm.expect(target).to.have.property('createdOn');",
+									"pm.expect(target).to.have.property('description');",
+									"pm.expect(target).to.have.property('eventDate');",
+									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('initiator');",
+									"pm.expect(target).to.have.property('location');",
+									"pm.expect(target).to.have.property('paid');",
+									"pm.expect(target).to.have.property('participantLimit');",
+									"pm.expect(target).to.have.property('publishedOn');",
+									"pm.expect(target).to.have.property('requestModeration');",
+									"pm.expect(target).to.have.property('state');",
+									"pm.expect(target).to.have.property('title');",
+									"pm.expect(target).to.have.property('views');",
+									"pm.expect(target).to.have.property('likes');",
+									"pm.expect(target).to.have.property('dislikes');",
+									"pm.expect(target).to.have.property('rating');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"annotation\" : \"event2annotationevent2\",\n    \"category\" : 1,\n    \"description\" : \"descriptionForEvent2Description\",\n    \"eventDate\" : \"2024-06-14 13:00:00\",\n    \"location\": {\n        \"lat\": 8.4394,\n        \"lon\": -32.6814\n    },\n    \"paid\" : \"false\",\n    \"participantLimit\" : 100,\n    \"requestModeration\" : false,\n    \"title\" : \"TitleForEvent2TitleTitle\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/events?from=0&size=2&raiting=true",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"events"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "2"
+								},
+								{
+									"key": "raiting",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Принятие события 1 админом",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(200);; // код ответа должен быть равен 200 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля\", function () {",
+									"pm.expect(target).to.have.property('annotation');",
+									"pm.expect(target).to.have.property('category');",
+									"pm.expect(target).to.have.property('confirmedRequests');",
+									"pm.expect(target).to.have.property('createdOn');",
+									"pm.expect(target).to.have.property('description');",
+									"pm.expect(target).to.have.property('eventDate');",
+									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('initiator');",
+									"pm.expect(target).to.have.property('location');",
+									"pm.expect(target).to.have.property('paid');",
+									"pm.expect(target).to.have.property('participantLimit');",
+									"pm.expect(target).to.have.property('publishedOn');",
+									"pm.expect(target).to.have.property('requestModeration');",
+									"pm.expect(target).to.have.property('state');",
+									"pm.expect(target).to.have.property('title');",
+									"pm.expect(target).to.have.property('views');",
+									"pm.expect(target).to.have.property('likes');",
+									"pm.expect(target).to.have.property('state');",
+									"pm.expect(target).to.have.property('dislikes');",
+									"pm.expect(target).to.have.property('rating');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"stateAction\" : \"PUBLISH_EVENT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/admin/events/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Принятие события 2 админом",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(200);; // код ответа должен быть равен 200 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля\", function () {",
+									"pm.expect(target).to.have.property('annotation');",
+									"pm.expect(target).to.have.property('category');",
+									"pm.expect(target).to.have.property('confirmedRequests');",
+									"pm.expect(target).to.have.property('createdOn');",
+									"pm.expect(target).to.have.property('description');",
+									"pm.expect(target).to.have.property('eventDate');",
+									"pm.expect(target).to.have.property('id');",
+									"pm.expect(target).to.have.property('initiator');",
+									"pm.expect(target).to.have.property('location');",
+									"pm.expect(target).to.have.property('paid');",
+									"pm.expect(target).to.have.property('participantLimit');",
+									"pm.expect(target).to.have.property('publishedOn');",
+									"pm.expect(target).to.have.property('requestModeration');",
+									"pm.expect(target).to.have.property('state');",
+									"pm.expect(target).to.have.property('title');",
+									"pm.expect(target).to.have.property('views');",
+									"pm.expect(target).to.have.property('likes');",
+									"pm.expect(target).to.have.property('dislikes');",
+									"pm.expect(target).to.have.property('rating');",
+									"pm.expect(target).to.have.property('state');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"stateAction\" : \"PUBLISH_EVENT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/admin/events/2"
+					},
+					"response": []
+				},
+				{
+					"name": "пользователь 1 лайк событию 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля\", function () {",
+									"pm.expect(target).to.have.property('mark');",
+									"pm.expect(target).to.have.property('count');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/1/like"
+					},
+					"response": []
+				},
+				{
+					"name": "пользователь 1 лайк событие 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля\", function () {",
+									"pm.expect(target).to.have.property('mark');",
+									"pm.expect(target).to.have.property('count');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/2/like"
+					},
+					"response": []
+				},
+				{
+					"name": "пользователь 2 лайк событие 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля\", function () {",
+									"pm.expect(target).to.have.property('mark');",
+									"pm.expect(target).to.have.property('count');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/2/event/2/like"
+					},
+					"response": []
+				},
+				{
+					"name": "Проверка сортировки по рейтингу",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(200);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/events?categories=1&paid=false&rangeStart=2022-01-06%2013%3A30%3A38&rangeEnd=2097-09-06%2013%3A30%3A38&onlyAvailable=false&sort=RATING&from=0&size=1000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"events"
+							],
+							"query": [
+								{
+									"key": "categories",
+									"value": "1"
+								},
+								{
+									"key": "paid",
+									"value": "false"
+								},
+								{
+									"key": "rangeStart",
+									"value": "2022-01-06%2013%3A30%3A38"
+								},
+								{
+									"key": "rangeEnd",
+									"value": "2097-09-06%2013%3A30%3A38"
+								},
+								{
+									"key": "onlyAvailable",
+									"value": "false"
+								},
+								{
+									"key": "sort",
+									"value": "RATING"
+								},
+								{
+									"key": "from",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "дизлайк, когда уже стоит лайк от пользователя 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function() {",
+									"   pm.response.to.have.status(409); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/1/dislike"
+					},
+					"response": []
+				},
+				{
+					"name": "удаление лайка пользователя 1 для события 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 204\", function() {",
+									"   pm.response.to.have.status(204); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/1/like"
+					},
+					"response": []
+				},
+				{
+					"name": "Дизлайк после удаления лайка",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});",
+									"",
+									"const target = pm.response.json();",
+									"",
+									"pm.test(\"Пользователь должен содержать поля\", function () {",
+									"pm.expect(target).to.have.property('mark');",
+									"pm.expect(target).to.have.property('count');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/1/dislike"
+					},
+					"response": []
+				},
+				{
+					"name": "удаление дизлайка",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 406\", function() {",
+									"   pm.response.to.have.status(204); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/1/dislike"
+					},
+					"response": []
+				},
+				{
+					"name": "Сортирвока по рейтингу",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(200);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/events?categories=1&paid=false&rangeStart=2022-01-06%2013%3A30%3A38&rangeEnd=2097-09-06%2013%3A30%3A38&onlyAvailable=false&sort=RATING&from=0&size=1000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"events"
+							],
+							"query": [
+								{
+									"key": "categories",
+									"value": "1"
+								},
+								{
+									"key": "paid",
+									"value": "false"
+								},
+								{
+									"key": "rangeStart",
+									"value": "2022-01-06%2013%3A30%3A38"
+								},
+								{
+									"key": "rangeEnd",
+									"value": "2097-09-06%2013%3A30%3A38"
+								},
+								{
+									"key": "onlyAvailable",
+									"value": "false"
+								},
+								{
+									"key": "sort",
+									"value": "RATING"
+								},
+								{
+									"key": "from",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "validation",
+			"item": [
+				{
+					"name": "Несуществующий пользователь",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function() {",
+									"   pm.response.to.have.status(409); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/99999/event/1/like"
+					},
+					"response": []
+				},
+				{
+					"name": "Несуществующее событие",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function() {",
+									"   pm.response.to.have.status(409); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/99999/like"
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление нового события Copy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"annotation\" : \"nutPublishednutPublishednutPublished\",\n    \"category\" : 1,\n    \"description\" : \"nutPublishednutPublishednutPublishednutPublished\",\n    \"eventDate\" : \"2024-05-14 13:00:00\",\n    \"location\": {\n        \"lat\": 8.4394,\n        \"lon\": -32.6814\n    },\n    \"paid\" : \"false\",\n    \"participantLimit\" : 100,\n    \"requestModeration\" : false,\n    \"title\" : \"nutPublishednutPublished\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/events",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"events"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "лайк неопубликованному событию",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function() {",
+									"   pm.response.to.have.status(409); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/99999/event/1/like"
+					},
+					"response": []
+				},
+				{
+					"name": "повторный лайк",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function() {",
+									"   pm.response.to.have.status(409); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/2/event/2/like"
+					},
+					"response": []
+				},
+				{
+					"name": "дизлайк событию 1 от пользователя 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {",
+									"   pm.response.to.have.status(201);; // код ответа должен быть равен 201 OK",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/1/dislike"
+					},
+					"response": []
+				},
+				{
+					"name": "повторный дизлайк",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function() {",
+									"   pm.response.to.have.status(409); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/1/dislike"
+					},
+					"response": []
+				},
+				{
+					"name": "лайк когда есть дизлайк",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function() {",
+									"   pm.response.to.have.status(409); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/1/like"
+					},
+					"response": []
+				},
+				{
+					"name": "дизлайк когда есть лайк",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function() {",
+									"   pm.response.to.have.status(409); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/users/2/event/2/dislike"
+					},
+					"response": []
+				},
+				{
+					"name": "удаление несуществующего лайка",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function() {",
+									"   pm.response.to.have.status(409); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/users/2/event/1/like"
+					},
+					"response": []
+				},
+				{
+					"name": "удаление несуществующего lbpkfqrf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function() {",
+									"   pm.response.to.have.status(409); // код ответа должен быть равен 409",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/users/1/event/2/dislike"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

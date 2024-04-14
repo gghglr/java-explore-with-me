@@ -61,6 +61,9 @@ public class UserEventServiceImpl implements UserEventService {
         userEvent.setInitiator(user.get());
         userEvent.setState(State.PENDING);
         userEvent.setViews(0);
+        userEvent.setLikes(0);
+        userEvent.setDislikes(0);
+        userEvent.setRating(0);
         userEvent = eventRepository.save(userEvent);
         log.info("Сохраненный ивент: {}", userEvent);
         return UserEventMapper.toEventDtoFromEvent(userEvent);
@@ -77,10 +80,10 @@ public class UserEventServiceImpl implements UserEventService {
     @Override
     public List<ParticipationRequestDto> getRequests(long userId, long eventId) {
         adminRepository.findById(userId).orElseThrow(() -> {
-            return new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь не найден");
         });
         eventRepository.findById(eventId).orElseThrow(() -> {
-            return new NotFoundException("Событие не найдено");
+            throw new NotFoundException("Событие не найдено");
         });
         return requestsRepository.findByEvent_id(eventId)
                 .stream()

@@ -35,7 +35,7 @@ public class PublicEventServiceImpl implements PublicEventService {
                                                 LocalDateTime rangeStart, LocalDateTime rangeEnd, String sort,
                                                 int from, int size) {
         Pageable pageable;
-        if (sort.equals("EVENT_DATE") || sort.equals("VIEWS")) {
+        if (sort.equals("EVENT_DATE") || sort.equals("VIEWS") || sort.equals("RATING")) {
             pageable = PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, toLowerCase(sort)));
         } else {
             throw new NotFoundException("Сортировка не найдена");

@@ -47,6 +47,9 @@ public class UserEventMapper {
         eventFullDto.setState(userEvent.getState());
         eventFullDto.setTitle(userEvent.getTitle());
         eventFullDto.setViews(userEvent.getViews());
+        eventFullDto.setLikes(userEvent.getLikes());
+        eventFullDto.setDislikes(userEvent.getDislikes());
+        eventFullDto.setRating(userEvent.getRating());
         return eventFullDto;
     }
 
