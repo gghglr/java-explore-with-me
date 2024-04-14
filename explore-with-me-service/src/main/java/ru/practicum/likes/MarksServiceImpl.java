@@ -24,7 +24,7 @@ public class MarksServiceImpl implements MarksService {
     @Override
     public MarkDto createLike(long userId, long eventId) {
         UserEvent event = validAndReturnEvent(userId, eventId);
-        if(markRepository.findByEventIdAndUserId(eventId, userId).isPresent()) {
+        if (markRepository.findByEventIdAndUserId(eventId, userId).isPresent()) {
             throw new ConflictException("Оценка уже поставлена!");
         }
         eventRepository.setLike(eventId);
@@ -45,7 +45,7 @@ public class MarksServiceImpl implements MarksService {
     @Override
     public MarkDto createDislike(long userId, long eventId) {
         UserEvent event = validAndReturnEvent(userId, eventId);
-        if(markRepository.findByEventIdAndUserId(eventId, userId).isPresent()) {
+        if (markRepository.findByEventIdAndUserId(eventId, userId).isPresent()) {
             throw new ConflictException("Оценка уже поставлена!");
         }
         eventRepository.setDislike(eventId);
@@ -67,7 +67,7 @@ public class MarksServiceImpl implements MarksService {
     @Override
     public void deleteDislike(long userId, long eventId) {
         UserEvent event = validAndReturnEvent(userId, eventId);
-        if(markRepository.findByEventIdAndUserIdAndMark(eventId, userId, false).isEmpty()) {
+        if (markRepository.findByEventIdAndUserIdAndMark(eventId, userId, false).isEmpty()) {
             throw new ConflictException("Нечего удалять, вы не ставили дизлайк этому событию!");
         }
         markRepository.deleteByEventIdAndUserIdAndMark(eventId, userId, false);
@@ -75,10 +75,9 @@ public class MarksServiceImpl implements MarksService {
         eventRepository.removeDislike(eventId);
         if (rating + 1 >= 5) {
             eventRepository.setRating(eventId, 5);
-        } else if(rating == 0) {
+        } else if (rating == 0) {
             eventRepository.setRating(eventId, 0);
-        }
-        else {
+        } else {
             eventRepository.setRating(eventId, rating + 1);
         }
     }
@@ -87,7 +86,7 @@ public class MarksServiceImpl implements MarksService {
     @Override
     public void deleteLike(long userId, long eventId) {
         UserEvent event = validAndReturnEvent(userId, eventId);
-        if(!markRepository.findByEventIdAndUserIdAndMark(eventId, userId, true).isPresent()) {
+        if (!markRepository.findByEventIdAndUserIdAndMark(eventId, userId, true).isPresent()) {
             throw new ConflictException("Нечего удалять, вы не ставили лайк этому событию!");
         }
         markRepository.deleteByEventIdAndUserIdAndMark(eventId, userId, true);
