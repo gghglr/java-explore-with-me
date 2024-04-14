@@ -34,11 +34,7 @@ public class MarksServiceImpl implements MarksService {
         mark.setUserId(userId);
         mark.setMark(true);
         markRepository.save(mark);
-        if (rating + 1 >= 5) {
-            eventRepository.setRating(eventId, 5);
-        } else {
-            eventRepository.setRating(eventId, rating + 1);
-        }
+        eventRepository.setRating(eventId, Math.min(rating + 1, 5));
         return new MarkDto("лайков", eventRepository.getLikes(eventId));
     }
 
@@ -55,11 +51,7 @@ public class MarksServiceImpl implements MarksService {
         mark.setUserId(userId);
         mark.setMark(false);
         markRepository.save(mark);
-        if (rating - 1 <= 0) {
-            eventRepository.setRating(eventId, 0);
-        } else {
-            eventRepository.setRating(eventId, rating - 1);
-        }
+        eventRepository.setRating(eventId, Math.max(rating - 1, 0));
         return new MarkDto("дизлайков", eventRepository.getDislike(eventId));
     }
 
@@ -86,17 +78,13 @@ public class MarksServiceImpl implements MarksService {
     @Override
     public void deleteLike(long userId, long eventId) {
         UserEvent event = validAndReturnEvent(userId, eventId);
-        if (!markRepository.findByEventIdAndUserIdAndMark(eventId, userId, true).isPresent()) {
+        if (markRepository.findByEventIdAndUserIdAndMark(eventId, userId, true).isEmpty()) {
             throw new ConflictException("Нечего удалять, вы не ставили лайк этому событию!");
         }
         markRepository.deleteByEventIdAndUserIdAndMark(eventId, userId, true);
         int rating = event.getRating();
         eventRepository.removeLike(eventId);
-        if (rating - 1 <= 0) {
-            eventRepository.setRating(eventId, 0);
-        } else {
-            eventRepository.setRating(eventId, rating - 1);
-        }
+        eventRepository.setRating(eventId, Math.max(rating - 1, 0));
     }
 
     private UserEvent validAndReturnEvent(long userId, long eventId) {
