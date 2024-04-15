@@ -27,11 +27,42 @@ public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
 
     @Transactional
     @Modifying
+    @Query("UPDATE UserEvent r set r.likes = r.likes + 1 where r.id = :eventId")
+    void setLike(@Param("eventId") long eventId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE UserEvent r set r.dislikes = r.dislikes + 1 where r.id = :eventId")
+    void setDislike(@Param("eventId") long eventId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE UserEvent r set r.likes = r.likes - 1 where r.id = :eventId")
+    void removeLike(@Param("eventId") long eventId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE UserEvent r set r.dislikes = r.dislikes - 1 where r.id = :eventId")
+    void removeDislike(@Param("eventId") long eventId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE UserEvent r set r.rating = :rating where r.id = :eventId")
+    int setRating(@Param("eventId") long eventId, @Param("rating") int rating);
+
+    @Transactional
+    @Modifying
     @Query("UPDATE UserEvent r set r.confirmedRequests = r.confirmedRequests - :count where r.id = :id")
     void minusConfirmedRequests(@Param("id") long id, @Param("count") int count);
 
     @Query(value = "SELECT e.confirmedRequests FROM UserEvent e WHERE e.id = :id")
     int getConfirmedReq(@Param("id") long id);
+
+    @Query(value = "SELECT e.dislikes FROM UserEvent e WHERE e.id = :eventId")
+    int getDislike(@Param("eventId") long eventId);
+
+    @Query(value = "SELECT e.likes FROM UserEvent e WHERE e.id = :eventId")
+    int getLikes(@Param("eventId") long eventId);
 
     List<UserEvent> findByIdIn(List<Long> ids);
 

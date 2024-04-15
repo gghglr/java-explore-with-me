@@ -88,9 +88,6 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (updateEventAdminRequest.getDescription() != null) {
             event.setDescription(updateEventAdminRequest.getDescription());
         }
-        if (updateEventAdminRequest.getPaid() != true) {
-            event.setPaid(updateEventAdminRequest.getPaid());
-        }
         if (updateEventAdminRequest.getEventDate() != null) {
             LocalDateTime timeToUpdate = LocalDateTime.parse(updateEventAdminRequest.getEventDate(),
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
